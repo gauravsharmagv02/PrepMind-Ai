@@ -39,7 +39,7 @@ const CodingPage = () => {
 
   const selectProblem = (prob, lang = language) => {
     setSelectedProblem(prob);
-    setCode(prob.starterTemplates?.[lang] || `function ${prob.functionName || 'solution'}() {\n    // Write your solution here\n}`);
+    setCode('');
     setConsoleOutput('Console output ready.');
     setTestResultsData(null);
     setAiFeedback(null);
@@ -47,9 +47,7 @@ const CodingPage = () => {
 
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
-    if (selectedProblem && selectedProblem.starterTemplates?.[newLang]) {
-      setCode(selectedProblem.starterTemplates[newLang]);
-    }
+    setCode('');
   };
 
   const handleRunCode = async () => {
@@ -142,7 +140,7 @@ const CodingPage = () => {
 
   const handleReset = () => {
     if (selectedProblem) {
-      setCode(selectedProblem.starterTemplates?.[language] || '');
+      setCode('');
       setConsoleOutput('Editor reset.');
       setTestResultsData(null);
       setAiFeedback(null);
@@ -318,6 +316,7 @@ const CodingPage = () => {
               <textarea
                 className="form-control code-editor-input"
                 wrap="off"
+                placeholder="Write your solution here..."
                 style={{
                   fontFamily: 'var(--font-mono)',
                   height: '220px',
