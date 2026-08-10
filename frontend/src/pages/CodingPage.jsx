@@ -395,7 +395,7 @@ const CodingPage = () => {
                         </span>
                       </div>
 
-                      <div style={{ marginTop: '0.5rem', fontSize: '0.84rem', color: 'var(--text-muted)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                      <div className="test-case-io-grid" style={{ marginTop: '0.5rem', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
                         <div><strong style={{ color: 'var(--text-main)' }}>Input:</strong> <code style={{ fontFamily: 'var(--font-mono)' }}>{tr.input}</code></div>
                         <div><strong style={{ color: 'var(--text-main)' }}>Expected:</strong> <code style={{ fontFamily: 'var(--font-mono)' }}>{tr.expected}</code></div>
                       </div>
@@ -433,7 +433,7 @@ const CodingPage = () => {
                 <span>AI Code Analysis ({aiFeedback.scoreRating})</span>
               </h3>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="ai-feedback-metrics-grid" style={{ gap: '1rem', marginBottom: '1rem' }}>
                 <div style={{ background: 'var(--background)', padding: '0.75rem', borderRadius: 'var(--radius-md)' }}>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Time Complexity</div>
                   <div style={{ fontWeight: 700, color: 'var(--success)' }}>{aiFeedback.timeComplexity}</div>
