@@ -57,7 +57,7 @@ app.use(async (req, res, next) => {
 });
 
 // API Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/health'], (req, res) => {
   res.json({
     status: 'ok',
     service: 'PrepMind AI Backend REST API',
@@ -65,18 +65,33 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// API Routes Mounting
+// API Routes Mounting (Support both /api/feature and /feature for maximum routing resilience)
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
+
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/dashboard', dashboardRoutes);
+
 app.use('/api/coding', codingRoutes);
+app.use('/coding', codingRoutes);
+
 app.use('/api/aptitude', aptitudeRoutes);
+app.use('/aptitude', aptitudeRoutes);
+
 app.use('/api/resume', resumeRoutes);
+app.use('/resume', resumeRoutes);
+
 app.use('/api/interview', interviewRoutes);
+app.use('/interview', interviewRoutes);
+
 app.use('/api/analytics', analyticsRoutes);
+app.use('/analytics', analyticsRoutes);
+
 app.use('/api/career', careerRoutes);
+app.use('/career', careerRoutes);
 
 // Catch-all 404 handler for API routes
-app.use('/api/*', (req, res) => {
+app.use(['/api/*', '/*'], (req, res) => {
   res.status(404).json({
     success: false,
     message: `API endpoint ${req.originalUrl} not found.`
