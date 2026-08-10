@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Toast from '../components/Toast';
-import { Play, CheckCircle2, Sparkles, RotateCcw, Code2, Gauge, Terminal } from 'lucide-react';
+import { Play, CheckCircle2, XCircle, AlertTriangle, AlertOctagon, Clock, Sparkles, RotateCcw, Code2, Terminal } from 'lucide-react';
 
 const CodingPage = () => {
   const [problems, setProblems] = useState([]);
@@ -10,10 +10,12 @@ const CodingPage = () => {
   const [difficulty, setDifficulty] = useState('All');
   const [language, setLanguage] = useState('javascript');
   const [code, setCode] = useState('');
-  const [consoleOutput, setConsoleOutput] = useState('Click "Run Code" to test execution...');
+  const [consoleOutput, setConsoleOutput] = useState('Click "Run Code" or "Submit" to test execution...');
+  const [testResultsData, setTestResultsData] = useState(null);
   const [aiFeedback, setAiFeedback] = useState(null);
   const [loading, setLoading] = useState(true);
   const [executing, setExecuting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
@@ -37,8 +39,9 @@ const CodingPage = () => {
 
   const selectProblem = (prob, lang = language) => {
     setSelectedProblem(prob);
-    setCode(prob.starterTemplates?.[lang] || `// Write your ${lang} code here...`);
+    setCode(prob.starterTemplates?.[lang] || `function ${prob.functionName || 'solution'}() {\n    // Write your solution here\n}`);
     setConsoleOutput('Console output ready.');
+    setTestResultsData(null);
     setAiFeedback(null);
   };
 
@@ -52,7 +55,8 @@ const CodingPage = () => {
   const handleRunCode = async () => {
     if (!selectedProblem) return;
     setExecuting(true);
-    setConsoleOutput('Compiling & running test cases...');
+    setConsoleOutput('Executing visible test cases in isolated sandbox...');
+    setTestResultsData(null);
     try {
       const res = await api.post('/coding/run', {
         problemId: selectedProblem.id,
@@ -60,22 +64,59 @@ const CodingPage = () => {
         code
       });
 
-      if (res.success) {
-        let outputStr = res.output + '\n\nTest Cases:\n';
-        (res.testResults || []).forEach(tr => {
-          outputStr += `Test Case ${tr.testCase}: [PASSED] (Input: ${tr.input} => Expected: ${tr.expected})\n`;
-        });
-        setConsoleOutput(outputStr);
-        setToast({ message: 'Code executed successfully!', type: 'success' });
+      setTestResultsData({
+        status: res.status,
+        passed: res.passed,
+        total: res.total,
+        testResults: res.testResults || [],
+        mode: 'run'
+      });
+
+      setConsoleOutput(res.output || 'Execution completed.');
+      if (res.status === 'ACCEPTED') {
+        setToast({ message: 'All sample test cases passed!', type: 'success' });
       } else {
-        setConsoleOutput(`Runtime / Execution Error:\n${res.output}`);
-        setToast({ message: 'Execution completed with errors.', type: 'error' });
+        setToast({ message: `Execution completed: ${res.status.replace('_', ' ')}`, type: 'error' });
       }
     } catch (err) {
       setConsoleOutput(`Error: ${err.message}`);
       setToast({ message: err.message, type: 'error' });
     } finally {
       setExecuting(false);
+    }
+  };
+
+  const handleSubmitCode = async () => {
+    if (!selectedProblem) return;
+    setSubmitting(true);
+    setConsoleOutput('Evaluating solution against full test suite (visible + hidden)...');
+    setTestResultsData(null);
+    try {
+      const res = await api.post('/coding/submit', {
+        problemId: selectedProblem.id,
+        language,
+        code
+      });
+
+      setTestResultsData({
+        status: res.status,
+        passed: res.passed,
+        total: res.total,
+        testResults: res.testResults || [],
+        mode: 'submit'
+      });
+
+      setConsoleOutput(res.output || 'Submission evaluated.');
+      if (res.status === 'ACCEPTED') {
+        setToast({ message: 'Accepted! All test cases passed.', type: 'success' });
+      } else {
+        setToast({ message: `Submission result: ${res.status.replace('_', ' ')}`, type: 'error' });
+      }
+    } catch (err) {
+      setConsoleOutput(`Error: ${err.message}`);
+      setToast({ message: err.message, type: 'error' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -103,7 +144,76 @@ const CodingPage = () => {
     if (selectedProblem) {
       setCode(selectedProblem.starterTemplates?.[language] || '');
       setConsoleOutput('Editor reset.');
+      setTestResultsData(null);
       setAiFeedback(null);
+    }
+  };
+
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'ACCEPTED':
+        return 'badge-success';
+      case 'WRONG_ANSWER':
+      case 'RUNTIME_ERROR':
+      case 'EXECUTION_ERROR':
+        return 'badge-danger';
+      case 'SYNTAX_ERROR':
+      case 'TIME_LIMIT_EXCEEDED':
+        return 'badge-warning';
+      default:
+        return 'badge-warning';
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'ACCEPTED':
+        return 'var(--success)';
+      case 'WRONG_ANSWER':
+      case 'RUNTIME_ERROR':
+      case 'EXECUTION_ERROR':
+        return 'var(--danger)';
+      case 'SYNTAX_ERROR':
+      case 'TIME_LIMIT_EXCEEDED':
+        return 'var(--warning)';
+      default:
+        return 'var(--primary)';
+    }
+  };
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'ACCEPTED':
+        return 'Accepted';
+      case 'WRONG_ANSWER':
+        return 'Wrong Answer';
+      case 'RUNTIME_ERROR':
+        return 'Runtime Error';
+      case 'SYNTAX_ERROR':
+        return 'Syntax Error';
+      case 'TIME_LIMIT_EXCEEDED':
+        return 'Time Limit Exceeded';
+      case 'EXECUTION_ERROR':
+        return 'Execution Error';
+      default:
+        return status || 'Evaluated';
+    }
+  };
+
+  const renderStatusIcon = (status) => {
+    switch (status) {
+      case 'ACCEPTED':
+        return <CheckCircle2 size={20} color="var(--success)" />;
+      case 'WRONG_ANSWER':
+      case 'RUNTIME_ERROR':
+      case 'EXECUTION_ERROR':
+        return <XCircle size={20} color="var(--danger)" />;
+      case 'SYNTAX_ERROR':
+        return <AlertOctagon size={20} color="var(--warning)" />;
+      case 'TIME_LIMIT_EXCEEDED':
+        return <Clock size={20} color="var(--warning)" />;
+      default:
+        return <AlertTriangle size={20} color="var(--warning)" />;
     }
   };
 
@@ -184,15 +294,26 @@ const CodingPage = () => {
                   onChange={(e) => handleLanguageChange(e.target.value)}
                 >
                   <option value="javascript">JavaScript</option>
-                  <option value="python">Python</option>
-                  <option value="cpp">C++</option>
-                  <option value="java">Java</option>
+                  <option value="python" disabled>Python (Coming Soon)</option>
+                  <option value="cpp" disabled>C++ (Coming Soon)</option>
+                  <option value="java" disabled>Java (Coming Soon)</option>
                 </select>
               </div>
 
               <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
                 {selectedProblem.statement}
               </p>
+
+              {selectedProblem.constraints && selectedProblem.constraints.length > 0 && (
+                <div style={{ marginBottom: '1rem', background: 'var(--background)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', fontSize: '0.84rem' }}>
+                  <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>Constraints:</span>
+                  <ul style={{ paddingLeft: '1.25rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                    {selectedProblem.constraints.map((c, i) => (
+                      <li key={i}>{c}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               <textarea
                 className="form-control"
@@ -210,15 +331,15 @@ const CodingPage = () => {
               />
 
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', flexWrap: 'wrap' }}>
-                <button className="btn btn-primary" onClick={handleRunCode} disabled={executing}>
+                <button className="btn btn-primary" onClick={handleRunCode} disabled={executing || submitting}>
                   <Play size={18} />
                   <span>{executing ? 'Running...' : 'Run Code'}</span>
                 </button>
-                <button className="btn btn-secondary" onClick={handleRunCode} disabled={executing}>
+                <button className="btn btn-secondary" onClick={handleSubmitCode} disabled={executing || submitting}>
                   <CheckCircle2 size={18} />
-                  <span>Submit</span>
+                  <span>{submitting ? 'Submitting...' : 'Submit'}</span>
                 </button>
-                <button className="btn btn-outline" onClick={handleAiReview} disabled={executing}>
+                <button className="btn btn-outline" onClick={handleAiReview} disabled={executing || submitting}>
                   <Sparkles size={18} />
                   <span>AI Review</span>
                 </button>
@@ -227,10 +348,65 @@ const CodingPage = () => {
                   onClick={handleReset}
                   aria-label="Reset Code"
                   title="Reset starter code"
+                  disabled={executing || submitting}
                 >
                   <RotateCcw size={18} />
                   <span>Reset</span>
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* Test Results Display Card (LeetCode Style) */}
+          {testResultsData && (
+            <div className="card" style={{ marginBottom: '1rem', borderLeft: `4px solid ${getStatusColor(testResultsData.status)}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 className="card-title" style={{ marginBottom: 0, gap: '0.5rem' }}>
+                  {renderStatusIcon(testResultsData.status)}
+                  <span>Test Results ({testResultsData.mode === 'submit' ? 'Submit' : 'Run Code'})</span>
+                </h3>
+                <span className={`badge ${getStatusBadgeClass(testResultsData.status)}`} style={{ fontSize: '0.88rem', padding: '0.35rem 0.75rem' }}>
+                  {getStatusLabel(testResultsData.status)}
+                </span>
+              </div>
+
+              {testResultsData.testResults && testResultsData.testResults.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1rem' }}>
+                  {testResultsData.testResults.map((tr) => (
+                    <div
+                      key={tr.testCase}
+                      style={{
+                        background: 'var(--background)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: '0.75rem 1rem',
+                        border: `1px solid ${tr.passed ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 600 }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: tr.passed ? 'var(--success)' : 'var(--danger)' }}>
+                          {tr.passed ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+                          <span>Test Case {tr.testCase}</span>
+                        </span>
+                        <span style={{ fontSize: '0.82rem', color: tr.passed ? 'var(--success)' : 'var(--danger)', fontWeight: 700 }}>
+                          {tr.passed ? 'Passed' : 'Failed'}
+                        </span>
+                      </div>
+
+                      <div style={{ marginTop: '0.5rem', fontSize: '0.84rem', color: 'var(--text-muted)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                        <div><strong style={{ color: 'var(--text-main)' }}>Input:</strong> <code style={{ fontFamily: 'var(--font-mono)' }}>{tr.input}</code></div>
+                        <div><strong style={{ color: 'var(--text-main)' }}>Expected:</strong> <code style={{ fontFamily: 'var(--font-mono)' }}>{tr.expected}</code></div>
+                      </div>
+                      <div style={{ marginTop: '0.25rem', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
+                        <strong style={{ color: 'var(--text-main)' }}>Your Output:</strong> <code style={{ fontFamily: 'var(--font-mono)' }}>{tr.actual}</code>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', fontWeight: 700 }}>
+                <span style={{ color: getStatusColor(testResultsData.status) }}>{getStatusLabel(testResultsData.status)}</span>
+                <span>{testResultsData.passed} / {testResultsData.total} Test Cases Passed</span>
               </div>
             </div>
           )}

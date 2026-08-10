@@ -6,21 +6,33 @@ const MOCK_CODING_PROBLEMS = [
     title: "Two Sum Target Pair",
     difficulty: "Easy",
     category: "Arrays & Hashes",
+    functionName: "twoSum",
     statement: "Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.",
     examples: [
       { input: "nums = [2,7,11,15], target = 9", output: "[0,1]" },
       { input: "nums = [3,2,4], target = 6", output: "[1,2]" }
     ],
+    constraints: [
+      "2 <= nums.length <= 10^4",
+      "-10^9 <= nums[i] <= 10^9",
+      "-10^9 <= target <= 10^9",
+      "Only one valid answer exists."
+    ],
     starterTemplates: {
-      javascript: `/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction twoSum(nums, target) {\n    // Write your solution here\n    \n}`,
-      python: `def two_sum(nums: list[int], target: int) -> list[int]:\n    # Write your solution here\n    pass`,
-      cpp: `#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        // Write your solution here\n        return {};\n    }\n};`,
-      java: `import java.util.*;\n\nclass Solution {\n    public int[] twoSum(int[] nums, int target) {\n        // Write your solution here\n        return new int[]{};\n    }\n}`
+      javascript: `function twoSum(nums, target) {\n    // Write your solution here\n    \n}`,
+      python: `# Python execution coming soon\ndef two_sum(nums, target):\n    pass`,
+      cpp: `// C++ execution coming soon\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        return {};\n    }\n};`,
+      java: `// Java execution coming soon\nclass Solution {\n    public int[] twoSum(int[] nums, int target) {\n        return new int[]{};\n    }\n}`
     },
-    testCases: [
-      { input: "nums = [2,7,11,15], target = 9", expected: "[0, 1]" },
-      { input: "nums = [3,2,4], target = 6", expected: "[1, 2]" },
-      { input: "nums = [3,3], target = 6", expected: "[0, 1]" }
+    visibleTestCases: [
+      { input: [[2, 7, 11, 15], 9], expected: [0, 1], inputDisplay: "nums = [2,7,11,15], target = 9", expectedDisplay: "[0,1]" },
+      { input: [[3, 2, 4], 6], expected: [1, 2], inputDisplay: "nums = [3,2,4], target = 6", expectedDisplay: "[1,2]" },
+      { input: [[3, 3], 6], expected: [0, 1], inputDisplay: "nums = [3,3], target = 6", expectedDisplay: "[0,1]" }
+    ],
+    hiddenTestCases: [
+      { input: [[1, 5, 8, 3], 11], expected: [2, 3], inputDisplay: "nums = [1,5,8,3], target = 11", expectedDisplay: "[2,3]" },
+      { input: [[0, 4, 3, 0], 0], expected: [0, 3], inputDisplay: "nums = [0,4,3,0], target = 0", expectedDisplay: "[0,3]" },
+      { input: [[-1, -2, -3, -4, -5], -8], expected: [2, 4], inputDisplay: "nums = [-1,-2,-3,-4,-5], target = -8", expectedDisplay: "[2,4]" }
     ]
   },
   {
@@ -28,21 +40,31 @@ const MOCK_CODING_PROBLEMS = [
     title: "Valid Parentheses",
     difficulty: "Easy",
     category: "Stack",
+    functionName: "isValid",
     statement: "Given a string `s` containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
     examples: [
       { input: "s = \"()[]{}\"", output: "true" },
       { input: "s = \"(]\"", output: "false" }
     ],
+    constraints: [
+      "1 <= s.length <= 10^4",
+      "s consists of parentheses only '()[]{}'."
+    ],
     starterTemplates: {
-      javascript: `/**\n * @param {string} s\n * @return {boolean}\n */\nfunction isValid(s) {\n    // Write your solution here\n    \n}`,
-      python: `def is_valid(s: str) -> bool:\n    # Write your solution here\n    pass`,
-      cpp: `#include <string>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool isValid(string s) {\n        // Write your solution here\n        return false;\n    }\n};`,
-      java: `class Solution {\n    public boolean isValid(String s) {\n        // Write your solution here\n        return false;\n    }\n}`
+      javascript: `function isValid(s) {\n    // Write your solution here\n    \n}`,
+      python: `# Python execution coming soon\ndef is_valid(s):\n    pass`,
+      cpp: `// C++ execution coming soon\nclass Solution {\npublic:\n    bool isValid(string s) {\n        return false;\n    }\n};`,
+      java: `// Java execution coming soon\nclass Solution {\n    public boolean isValid(String s) {\n        return false;\n    }\n}`
     },
-    testCases: [
-      { input: "s = \"()[]{}\"", expected: "true" },
-      { input: "s = \"([)]\"", expected: "false" },
-      { input: "s = \"{[]}\"", expected: "true" }
+    visibleTestCases: [
+      { input: ["()[]{}"], expected: true, inputDisplay: "s = \"()[]{}\"", expectedDisplay: "true" },
+      { input: ["(]"], expected: false, inputDisplay: "s = \"(]\"", expectedDisplay: "false" },
+      { input: ["{[]}"], expected: true, inputDisplay: "s = \"{[]}\"", expectedDisplay: "true" }
+    ],
+    hiddenTestCases: [
+      { input: ["([)]"], expected: false, inputDisplay: "s = \"([)]\"", expectedDisplay: "false" },
+      { input: ["]"], expected: false, inputDisplay: "s = \"]\"", expectedDisplay: "false" },
+      { input: ["(("], expected: false, inputDisplay: "s = \"((\"", expectedDisplay: "false" }
     ]
   },
   {
@@ -50,21 +72,31 @@ const MOCK_CODING_PROBLEMS = [
     title: "Longest Substring Without Repeating Characters",
     difficulty: "Medium",
     category: "Sliding Window",
+    functionName: "lengthOfLongestSubstring",
     statement: "Given a string `s`, find the length of the longest substring without repeating characters.",
     examples: [
       { input: "s = \"abcabcbb\"", output: "3 (abc)" },
       { input: "s = \"bbbbb\"", output: "1 (b)" }
     ],
+    constraints: [
+      "0 <= s.length <= 5 * 10^4",
+      "s consists of English letters, digits, symbols and spaces."
+    ],
     starterTemplates: {
-      javascript: `/**\n * @param {string} s\n * @return {number}\n */\nfunction lengthOfLongestSubstring(s) {\n    // Write your solution here\n    \n}`,
-      python: `def length_of_longest_substring(s: str) -> int:\n    # Write your solution here\n    pass`,
-      cpp: `#include <string>\nusing namespace std;\n\nclass Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        // Write your solution here\n        return 0;\n    }\n};`,
-      java: `class Solution {\n    public int lengthOfLongestSubstring(String s) {\n        // Write your solution here\n        return 0;\n    }\n}`
+      javascript: `function lengthOfLongestSubstring(s) {\n    // Write your solution here\n    \n}`,
+      python: `# Python execution coming soon\ndef length_of_longest_substring(s):\n    pass`,
+      cpp: `// C++ execution coming soon\nclass Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        return 0;\n    }\n};`,
+      java: `// Java execution coming soon\nclass Solution {\n    public int lengthOfLongestSubstring(String s) {\n        return 0;\n    }\n}`
     },
-    testCases: [
-      { input: "s = \"abcabcbb\"", expected: "3" },
-      { input: "s = \"bbbbb\"", expected: "1" },
-      { input: "s = \"pwwkew\"", expected: "3" }
+    visibleTestCases: [
+      { input: ["abcabcbb"], expected: 3, inputDisplay: "s = \"abcabcbb\"", expectedDisplay: "3" },
+      { input: ["bbbbb"], expected: 1, inputDisplay: "s = \"bbbbb\"", expectedDisplay: "1" },
+      { input: ["pwwkew"], expected: 3, inputDisplay: "s = \"pwwkew\"", expectedDisplay: "3" }
+    ],
+    hiddenTestCases: [
+      { input: [""], expected: 0, inputDisplay: "s = \"\"", expectedDisplay: "0" },
+      { input: [" "], expected: 1, inputDisplay: "s = \" \"", expectedDisplay: "1" },
+      { input: ["dvdf"], expected: 3, inputDisplay: "s = \"dvdf\"", expectedDisplay: "3" }
     ]
   },
   {
@@ -72,19 +104,29 @@ const MOCK_CODING_PROBLEMS = [
     title: "Trapping Rain Water",
     difficulty: "Hard",
     category: "Two Pointers",
+    functionName: "trap",
     statement: "Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
     examples: [
       { input: "height = [0,1,0,2,1,0,1,3,2,1,2,1]", output: "6" }
     ],
+    constraints: [
+      "n == height.length",
+      "1 <= n <= 2 * 10^4",
+      "0 <= height[i] <= 10^5"
+    ],
     starterTemplates: {
-      javascript: `/**\n * @param {number[]} height\n * @return {number}\n */\nfunction trap(height) {\n    // Write your solution here\n    \n}`,
-      python: `def trap(height: list[int]) -> int:\n    # Write your solution here\n    pass`,
-      cpp: `#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    int trap(vector<int>& height) {\n        // Write your solution here\n        return 0;\n    }\n};`,
-      java: `class Solution {\n    public int trap(int[] height) {\n        // Write your solution here\n        return 0;\n    }\n}`
+      javascript: `function trap(height) {\n    // Write your solution here\n    \n}`,
+      python: `# Python execution coming soon\ndef trap(height):\n    pass`,
+      cpp: `// C++ execution coming soon\nclass Solution {\npublic:\n    int trap(vector<int>& height) {\n        return 0;\n    }\n};`,
+      java: `// Java execution coming soon\nclass Solution {\n    public int trap(int[] height) {\n        return 0;\n    }\n}`
     },
-    testCases: [
-      { input: "height = [0,1,0,2,1,0,1,3,2,1,2,1]", expected: "6" },
-      { input: "height = [4,2,0,3,2,5]", expected: "9" }
+    visibleTestCases: [
+      { input: [[0,1,0,2,1,0,1,3,2,1,2,1]], expected: 6, inputDisplay: "height = [0,1,0,2,1,0,1,3,2,1,2,1]", expectedDisplay: "6" },
+      { input: [[4,2,0,3,2,5]], expected: 9, inputDisplay: "height = [4,2,0,3,2,5]", expectedDisplay: "9" }
+    ],
+    hiddenTestCases: [
+      { input: [[0]], expected: 0, inputDisplay: "height = [0]", expectedDisplay: "0" },
+      { input: [[3,0,2,0,4]], expected: 7, inputDisplay: "height = [3,0,2,0,4]", expectedDisplay: "7" }
     ]
   }
 ];
