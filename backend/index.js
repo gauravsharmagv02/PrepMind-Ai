@@ -19,11 +19,17 @@ const errorMiddleware = require('./middleware/error.middleware');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration for local development
+// CORS configuration for local & production Vercel frontend domains
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1') || origin === FRONTEND_URL) {
+    if (
+      !origin ||
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1') ||
+      origin.includes('vercel.app') ||
+      origin === FRONTEND_URL
+    ) {
       callback(null, true);
     } else {
       callback(null, true);
@@ -34,6 +40,20 @@ app.use(cors({
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Middleware to ensure MongoDB Atlas connection for every request
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('Database connection middleware error:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Database connection failed: ' + error.message
+    });
+  }
+});
 
 // API Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -65,19 +85,20 @@ app.use('/api/*', (req, res) => {
 // Global Error Handler Middleware
 app.use(errorMiddleware);
 
-// Start Express Server ONLY after MongoDB Atlas connection succeeds
-const startServer = async () => {
-  try {
-    await connectDB();
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error('Express server halted due to MongoDB connection failure.');
-    process.exit(1);
-  }
-};
-
-startServer();
+// Listen locally if running standalone server (outside Vercel serverless runtime)
+if (!process.env.VERCEL) {
+  const startServer = async () => {
+    try {
+      await connectDB();
+      app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+      });
+    } catch (error) {
+      console.error('Express server halted due to MongoDB connection failure.');
+      process.exit(1);
+    }
+  };
+  startServer();
+}
 
 module.exports = app;
