@@ -19,14 +19,10 @@ const errorMiddleware = require('./middleware/error.middleware');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Initialize Database Connection
-connectDB();
-
 // CORS configuration for local development
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl) or matching frontend URL
     if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1') || origin === FRONTEND_URL) {
       callback(null, true);
     } else {
@@ -69,8 +65,19 @@ app.use('/api/*', (req, res) => {
 // Global Error Handler Middleware
 app.use(errorMiddleware);
 
-app.listen(PORT, () => {
-  console.log(`🚀 PrepMind AI Backend running on http://localhost:${PORT}`);
-});
+// Start Express Server ONLY after MongoDB Atlas connection succeeds
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Express server halted due to MongoDB connection failure.');
+    process.exit(1);
+  }
+};
+
+startServer();
 
 module.exports = app;
