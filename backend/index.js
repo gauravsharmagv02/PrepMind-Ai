@@ -1,0 +1,76 @@
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const connectDB = require('./config/db');
+
+// Route imports
+const authRoutes = require('./routes/auth.routes');
+const dashboardRoutes = require('./routes/dashboard.routes');
+const codingRoutes = require('./routes/coding.routes');
+const aptitudeRoutes = require('./routes/aptitude.routes');
+const resumeRoutes = require('./routes/resume.routes');
+const interviewRoutes = require('./routes/interview.routes');
+const analyticsRoutes = require('./routes/analytics.routes');
+const careerRoutes = require('./routes/career.routes');
+
+// Middleware import
+const errorMiddleware = require('./middleware/error.middleware');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Initialize Database Connection
+connectDB();
+
+// CORS configuration for local development
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl) or matching frontend URL
+    if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1') || origin === FRONTEND_URL) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
+  credentials: true
+}));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// API Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'PrepMind AI Backend REST API',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// API Routes Mounting
+app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/coding', codingRoutes);
+app.use('/api/aptitude', aptitudeRoutes);
+app.use('/api/resume', resumeRoutes);
+app.use('/api/interview', interviewRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/career', careerRoutes);
+
+// Catch-all 404 handler for API routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `API endpoint ${req.originalUrl} not found.`
+  });
+});
+
+// Global Error Handler Middleware
+app.use(errorMiddleware);
+
+app.listen(PORT, () => {
+  console.log(`🚀 PrepMind AI Backend running on http://localhost:${PORT}`);
+});
+
+module.exports = app;
