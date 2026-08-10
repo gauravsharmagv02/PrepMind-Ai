@@ -21,19 +21,20 @@ const PORT = process.env.PORT || 5000;
 
 // CORS configuration for local & production Vercel frontend domains
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'https://prep-mind-ai-alpha.vercel.app',
+  FRONTEND_URL
+];
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (
-      !origin ||
-      origin.includes('localhost') ||
-      origin.includes('127.0.0.1') ||
-      origin.includes('vercel.app') ||
-      origin === FRONTEND_URL
-    ) {
-      callback(null, true);
-    } else {
-      callback(null, true);
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      return callback(null, true);
     }
+    return callback(new Error('CORS blocked origin: ' + origin));
   },
   credentials: true
 }));
