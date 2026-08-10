@@ -138,7 +138,7 @@ const AptitudePage = () => {
                 })}
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="aptitude-action-bar">
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button
                     className="btn btn-secondary"

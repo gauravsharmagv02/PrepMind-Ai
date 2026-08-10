@@ -209,7 +209,7 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+      <div className="dashboard-columns" style={{ gap: '1.5rem' }}>
         {/* Left Pane: Diagnosis & Recent Activity */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* AI Performance Diagnosis Card */}

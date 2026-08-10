@@ -70,7 +70,7 @@ const InterviewPage = () => {
       <p className="page-subtitle">Practice HR and Technical behavioral questions with instant AI feedback.</p>
 
       <div className="card">
-        <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem' }}>
+        <div className="interview-tabs" style={{ gap: '0.75rem', marginBottom: '1.25rem' }}>
           <button
             className={`btn btn-sm ${filterType === 'HR' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setFilterType('HR')}
@@ -135,7 +135,7 @@ const InterviewPage = () => {
               <span>AI Evaluation Rating: {feedback.overallScore}%</span>
             </h3>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div className="interview-metrics-grid" style={{ gap: '1rem', marginBottom: '1.25rem' }}>
               <div style={{ background: 'var(--background)', padding: '0.85rem', borderRadius: 'var(--radius-md)' }}>
                 <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Confidence Score</div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--success)' }}>
@@ -163,7 +163,7 @@ const InterviewPage = () => {
               <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{feedback.aiAssessment}</div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
+            <div className="interview-feedback-grid" style={{ gap: '1.25rem', marginBottom: '1.25rem' }}>
               <div>
                 <div style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: '0.4rem', color: 'var(--success)' }}>
                   Key Strengths:

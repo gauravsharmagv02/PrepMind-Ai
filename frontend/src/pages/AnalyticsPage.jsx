@@ -144,7 +144,7 @@ const AnalyticsPage = () => {
       <h1 className="page-title">Performance Analytics</h1>
       <p className="page-subtitle">Track your weekly practice statistics and monthly score progression.</p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+      <div className="analytics-grid" style={{ gap: '1.5rem' }}>
         <div className="card" style={{ height: '380px' }}>
           <h3 className="card-title">
             <Target size={20} color="#818cf8" />

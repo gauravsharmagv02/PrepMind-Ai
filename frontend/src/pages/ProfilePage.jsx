@@ -32,7 +32,7 @@ const ProfilePage = () => {
       <h1 className="page-title">User Profile & Placement Goal</h1>
       <p className="page-subtitle">Manage your account information and target career preferences.</p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+      <div className="profile-grid" style={{ gap: '1.5rem' }}>
         {/* User Info Card */}
         <div className="card">
           <h3 className="card-title">

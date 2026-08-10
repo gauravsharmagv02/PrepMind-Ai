@@ -17,6 +17,16 @@ const MainLayout = () => {
   return (
     <div className="app-layout">
       <Navbar onToggleSidebar={toggleSidebar} />
+      {sidebarOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={closeSidebar}
+          aria-label="Close navigation overlay"
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === 'Escape') closeSidebar(); }}
+        />
+      )}
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
       <main className="main-wrapper">
         <Outlet />

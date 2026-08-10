@@ -53,7 +53,7 @@ const ResumePage = () => {
       <h1 className="page-title">AI Resume ATS Analyzer</h1>
       <p className="page-subtitle">Upload your resume PDF/TXT or paste text to get instant ATS scores and formatting feedback.</p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+      <div className="resume-grid" style={{ gap: '1.5rem' }}>
         {/* Upload Pane */}
         <div className="card">
           <h3 className="card-title">
@@ -102,7 +102,7 @@ const ResumePage = () => {
                 <span>ATS Report Score: {analysis.overallScore}%</span>
               </h3>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
+              <div className="resume-scores-grid" style={{ gap: '1rem', marginBottom: '1.25rem' }}>
                 <div style={{ background: 'var(--background)', padding: '0.85rem', borderRadius: 'var(--radius-md)' }}>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ATS Compatibility</div>
                   <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--success)' }}>

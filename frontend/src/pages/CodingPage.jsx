@@ -226,7 +226,7 @@ const CodingPage = () => {
       <h1 className="page-title">Coding Practice System</h1>
       <p className="page-subtitle">Solve algorithms, run test cases, and get real-time AI code reviews.</p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '1.5rem' }}>
+      <div className="coding-page-layout">
         {/* Problems List Sidebar */}
         <div className="card" style={{ padding: '1rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -283,7 +283,7 @@ const CodingPage = () => {
         <div>
           {selectedProblem && (
             <div className="card" style={{ marginBottom: '1rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                 <h3 className="card-title" style={{ marginBottom: 0 }}>
                   {selectedProblem.title}
                 </h3>
@@ -316,21 +316,24 @@ const CodingPage = () => {
               )}
 
               <textarea
-                className="form-control"
+                className="form-control code-editor-input"
+                wrap="off"
                 style={{
                   fontFamily: 'var(--font-mono)',
                   height: '220px',
                   background: '#0f172a',
                   color: '#f8fafc',
                   fontSize: '0.9rem',
-                  lineHeight: '1.4'
+                  lineHeight: '1.5',
+                  whiteSpace: 'pre',
+                  overflowX: 'auto'
                 }}
                 spellCheck="false"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
               />
 
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+              <div className="coding-action-buttons" style={{ marginTop: '1rem' }}>
                 <button className="btn btn-primary" onClick={handleRunCode} disabled={executing || submitting}>
                   <Play size={18} />
                   <span>{executing ? 'Running...' : 'Run Code'}</span>

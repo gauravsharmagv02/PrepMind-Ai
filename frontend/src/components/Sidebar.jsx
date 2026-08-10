@@ -10,7 +10,8 @@ import {
   BarChart3,
   BriefcaseBusiness,
   UserRound,
-  LogOut
+  LogOut,
+  X
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -19,6 +20,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   const handleLogout = () => {
     logout();
+    onClose();
     navigate('/login');
   };
 
@@ -36,11 +38,23 @@ const Sidebar = ({ isOpen, onClose }) => {
   const initials = user && user.name ? user.name.substring(0, 2).toUpperCase() : 'PM';
 
   return (
-    <aside className={`sidebar ${isOpen ? 'mobile-open' : ''}`}>
+    <aside className={`sidebar ${isOpen ? 'mobile-open' : ''}`} aria-label="Main Navigation">
       <div>
-        <div className="brand-header">
-          <Brain size={24} color="#818cf8" style={{ flexShrink: 0 }} />
-          <span className="brand-name">PrepMind AI</span>
+        <div className="brand-header" style={{ justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Brain size={24} color="#818cf8" style={{ flexShrink: 0 }} />
+            <span className="brand-name">PrepMind AI</span>
+          </div>
+
+          {/* Close button visible on mobile */}
+          <button
+            className="sidebar-close-btn"
+            onClick={onClose}
+            aria-label="Close menu"
+            title="Close Menu"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         <ul className="nav-list">
