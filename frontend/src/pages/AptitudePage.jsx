@@ -13,9 +13,6 @@ const AptitudePage = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(900); // 15 minutes
-
-  useEffect(() => {
   const [selectedSection, setSelectedSection] = useState('All');
   const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes
 
