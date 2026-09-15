@@ -16,8 +16,12 @@ const AptitudePage = () => {
   const [timeLeft, setTimeLeft] = useState(900); // 15 minutes
 
   useEffect(() => {
-    fetchTests();
-  }, []);
+  const [selectedSection, setSelectedSection] = useState('All');
+  const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes
+
+  useEffect(() => {
+    fetchTests(selectedSection);
+  }, [selectedSection]);
 
   useEffect(() => {
     if (submitted || timeLeft <= 0) return;
@@ -27,12 +31,13 @@ const AptitudePage = () => {
     return () => clearInterval(timer);
   }, [submitted, timeLeft]);
 
-  const fetchTests = async () => {
+  const fetchTests = async (section = 'All') => {
     setLoading(true);
     try {
-      const res = await api.get('/aptitude/tests');
+      const res = await api.get(`/aptitude/tests${section !== 'All' ? `?section=${encodeURIComponent(section)}` : ''}`);
       if (res.success && res.questions.length > 0) {
         setQuestions(res.questions);
+        setCurrentIndex(0);
       }
     } catch (err) {
       setToast({ message: err.message, type: 'error' });
@@ -80,8 +85,27 @@ const AptitudePage = () => {
     <div>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <h1 className="page-title">Aptitude & Reasoning Diagnostic</h1>
-      <p className="page-subtitle">Practice Quantitative, Logical Reasoning, and Verbal diagnostic quizzes.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+        <div>
+          <h1 className="page-title" style={{ marginBottom: '0.2rem' }}>Aptitude & Reasoning Diagnostic</h1>
+          <p className="page-subtitle" style={{ marginBottom: 0 }}>Practice Quantitative, Logical Reasoning, and Verbal diagnostic quizzes.</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <label style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-muted)' }}>Section:</label>
+          <select
+            className="form-control"
+            style={{ padding: '0.35rem 0.75rem', fontSize: '0.88rem', width: 'auto' }}
+            value={selectedSection}
+            onChange={(e) => setSelectedSection(e.target.value)}
+            disabled={submitted}
+          >
+            <option value="All">All Sections (36 Questions)</option>
+            <option value="Quantitative">Quantitative Aptitude</option>
+            <option value="Logical Reasoning">Logical Reasoning</option>
+            <option value="Verbal Ability">Verbal Ability</option>
+          </select>
+        </div>
+      </div>
 
       {!submitted ? (
         <div className="card">

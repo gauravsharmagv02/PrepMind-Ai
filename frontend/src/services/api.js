@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const getApiBaseUrl = () => {
-  let url = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  let url = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
   url = url.trim().replace(/\/+$/, '');
   if (!url.endsWith('/api')) {
     url = `${url}/api`;

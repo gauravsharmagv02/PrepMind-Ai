@@ -17,13 +17,15 @@ const careerRoutes = require('./routes/career.routes');
 const errorMiddleware = require('./middleware/error.middleware');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // CORS configuration for local & production Vercel frontend domains
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const allowedOrigins = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
+  'http://localhost:5001',
+  'http://127.0.0.1:5001',
   'https://prep-mind-ai-alpha.vercel.app',
   FRONTEND_URL
 ];
@@ -31,7 +33,12 @@ const allowedOrigins = [
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+    // Allow localhost, local IP network (192.168.*, 10.*, 172.*), vercel apps
+    if (
+      allowedOrigins.includes(origin) || 
+      origin.endsWith('.vercel.app') ||
+      /^http:\/\/(192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+)(:\d+)?$/.test(origin)
+    ) {
       return callback(null, true);
     }
     return callback(new Error('CORS blocked origin: ' + origin));
